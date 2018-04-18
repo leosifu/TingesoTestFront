@@ -1,23 +1,38 @@
 import React from 'react';
 import Elementos from './tabla1';
 import '../index.css';
+import axios from 'axios';
 
 class Form1 extends React.Component {
   constructor(props) {
     super(props);
     this.state={
-      lista: [['123', 'hola', 'holi', 'buenas', 'jelou'], ['46', 'chau', 'bai', 'nohvimo', 'bendicione'], ['2308', 'uno', 'dos', 'tres', 'cuatro']],
+      lista: [],
       codigo: '',
       nombre: '',
       fecha: '',
       categoria: '',
-      precio: ''
+      precio: 0
     };
     this.cambio = this.cambio.bind(this);
     this.borrar = this.borrar.bind(this);
     this.agregar = this.agregar.bind(this);
     this.buscar = this.buscar.bind(this);
     this.modificar = this.modificar.bind(this);
+  }
+
+  componentDidMount(){
+    axios.get(`http://localhost:9090/products`)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        const lista = res.data;
+        this.setState({lista});
+        console.log("olii");
+        console.log(this.state.lista);
+        console.log(this.state.lista[0]);
+        console.log(this.state.lista[0].productCode);
+      });
   }
 
   cambio(event){
@@ -30,18 +45,38 @@ class Form1 extends React.Component {
   }
 
   agregar(event){
-    var lista = [];
-    lista.push(this.state.codigo);
-    lista.push(this.state.nombre);
-    lista.push(this.state.fecha);
-    lista.push(this.state.categoria);
-    lista.push(this.state.precio);
-    this.state.lista.push(lista);
-    console.log(this.state.lista);
+
+    const producto = {
+      productCode: parseInt(this.state.codigo),
+      productName: this.state.nombre,
+      category: this.state.categoria,
+      price: parseInt(this.state.precio),
+      expirationDate: this.state.fecha
+
+    }
+    axios.post(`http://localhost:9090/products`,  producto )
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      }).catch(error => {
+      console.log(error.response)
+      });
+  this.forceUpdate();
+    event.preventDefault();
   }
 
   borrar(event){
-    if(this.state.codigo === ''){
+    var link = `http://localhost:9090/products/` + this.state.codigo;
+    console.log(link);
+    axios.delete(link)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      }).catch(error => {
+      console.log(error.response)
+      });
+
+    /*if(this.state.codigo === ''){
       alert('Ingrese código');
     }
     else{
@@ -58,50 +93,51 @@ class Form1 extends React.Component {
         }
         i++;
       }
-    }
+    }*/
   }
 
   buscar(event){
-    if(this.state.codigo === ''){
-      alert('Ingrese código');
-    }
-    else{
-      var i = 0;
-      const largo = this.state.lista.length;
-      console.log('asd');
-      while(i<largo){
-        if(this.state.lista[i][0] === this.state.codigo){
-
-          this.state.codigo = this.state.lista[i][0];
-          var x = document.getElementsByName("codigo");
-          x[0].value = this.state.codigo;
-
-          this.state.nombre = this.state.lista[i][1];
-          var y = document.getElementsByName("nombre");
-          y[0].value = this.state.nombre;
-
-          this.state.fecha = this.state.lista[i][2];
-          var z = document.getElementsByName("fecha");
-          z[0].value = this.state.fecha;
-
-          this.state.categoria = this.state.lista[i][3];
-          var t = document.getElementsByName("categoria");
-          t[0].value = this.state.categoria;
-
-          this.state.precio = this.state.lista[i][4];
-          var m = document.getElementsByName("precio");
-          m[0].value = this.state.precio;
-
-          break;
-        }
-        i++;
-      }
-    }
+    var link = `http://localhost:9090/products/` + this.state.codigo;
+    console.log(link);
+    axios.get(link)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        console.log(res.data.price);
+        var x = document.getElementsByName("codigo");
+        x[0].value = res.data.productCode;
+        var y = document.getElementsByName("nombre");
+        y[0].value = res.data.productName;
+        var z = document.getElementsByName("fecha");
+        z[0].value = res.data.expirationDate;
+        var t = document.getElementsByName("categoria");
+        t[0].value = res.data.category;
+        var m = document.getElementsByName("precio");
+        m[0].value = res.data.price;
+      });
 
   }
 
   modificar(event){
-    if(this.state.codigo === ''){
+    var link = `http://localhost:9090/products?id=` + this.state.codigo + `&price=` + this.state.precio;
+    console.log(link);
+    const producto = {
+      productCode: parseInt(this.state.codigo),
+      productName: this.state.nombre,
+      category: this.state.categoria,
+      price: parseInt(this.state.precio),
+      expirationDate: this.state.fecha
+
+    };
+
+    axios.put(link, producto)
+      .then(res => {
+        console.log(res);
+
+      }).catch(error => {
+      console.log(error.response)
+      });
+    /*if(this.state.codigo === ''){
       alert('Ingrese código');
     }
     else{
@@ -132,6 +168,7 @@ class Form1 extends React.Component {
         i++;
       }
     }
+    */
 
   }
 
@@ -170,7 +207,7 @@ class Form1 extends React.Component {
                     <label for="family">Fecha de Vencimiento</label>
                 </td>
                 <td class="col-sm-3">
-                    <input name="fecha" class="form-control" onChange={this.cambio}></input>
+                    <input type="date" name="fecha" class="form-control" onChange={this.cambio}></input>
                 </td>
             </tr>
             <tr>
@@ -189,16 +226,10 @@ class Form1 extends React.Component {
                     <input name="precio" class="form-control" onChange={this.cambio}></input>
                 </td>
             </tr>
-            <tr>
-              <td class="col-sm-3">
-                <button onClick={this.agregar}>Agregar</button><button onClick={this.buscar}>Buscar</button>
-              </td>
-              <td class="col-sm-3">
-                <button onClick={this.modificar}>Editar</button><button onClick={this.borrar}>Borrar</button>
-              </td>
-            </tr>
 
         </table>
+        <button onClick={this.agregar}>Crear</button><button onClick={this.buscar}>Buscar</button>
+        <button onClick={this.modificar}>Editar</button><button onClick={this.borrar}>Borrar</button>
 
     </div>
     <Elementos lista={this.state.lista}/>

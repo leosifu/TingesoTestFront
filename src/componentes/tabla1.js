@@ -7,11 +7,11 @@ function ListaItems(props) {
   const numbers = props.numbers;
   const listItems = numbers.map((number) =>
     <tr>
-      <td>{number[0]}</td>
-      <td>{number[1]}</td>
-      <td>{number[2]}</td>
-      <td>{number[3]}</td>
-      <td>{number[4]}</td>
+      <td>{number.productCode}</td>
+      <td>{number.productName}</td>
+      <td>{number.expirationDate}</td>
+      <td>{number.category}</td>
+      <td>{number.price}</td>
     </tr>
 
   );
