@@ -2,6 +2,13 @@ import React from 'react';
 import '../index.css';
 
 
+function showDate(date){
+  var otraDate = new Date(date + 86400000);
+  console.log(otraDate);
+  console.log(otraDate.getMonth());
+  var fecha = otraDate.getDate() + '/' + (otraDate.getMonth()+1) +'/' + otraDate.getFullYear();
+  return fecha;
+}
 
 function ListaItems(props) {
   const numbers = props.numbers;
@@ -9,7 +16,7 @@ function ListaItems(props) {
     <tr>
       <td>{number.productCode}</td>
       <td>{number.productName}</td>
-      <td>{number.expirationDate}</td>
+      <td>{showDate(number.expirationDate)}</td>
       <td>{number.category}</td>
       <td>{number.price}</td>
     </tr>
@@ -34,7 +41,7 @@ class Elementos extends React.Component{
                 <tr>
                   <th>Código </th>
                   <th>Nombre  </th>
-                  <th>Fecha de Vencimiento</th>
+                  <th type>Fecha de Vencimiento</th>
                   <th>Categoría</th>
                   <th>Precio</th>
                 </tr>

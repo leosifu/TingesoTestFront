@@ -74,26 +74,8 @@ class Form1 extends React.Component {
         console.log(res.data);
       }).catch(error => {
       console.log(error.response)
-      });
+    });
 
-    /*if(this.state.codigo === ''){
-      alert('Ingrese código');
-    }
-    else{
-      console.log(this.state.lista);
-      console.log('olii');
-      console.log(this.state.lista);
-      var i = 0;
-      const largo = this.state.lista.length;
-      console.log('asd');
-      while(i<largo){
-        if(this.state.lista[i][0] === this.state.codigo){
-          this.state.lista.splice(i, 1);
-          break;
-        }
-        i++;
-      }
-    }*/
   }
 
   buscar(event){
@@ -108,8 +90,11 @@ class Form1 extends React.Component {
         x[0].value = res.data.productCode;
         var y = document.getElementsByName("nombre");
         y[0].value = res.data.productName;
+
         var z = document.getElementsByName("fecha");
-        z[0].value = res.data.expirationDate;
+        var fecha = new Date(res.data.expirationDate + 86400000);
+        z[0].value = fecha.toISOString().substr(0, 10);
+
         var t = document.getElementsByName("categoria");
         t[0].value = res.data.category;
         var m = document.getElementsByName("precio");
@@ -119,14 +104,11 @@ class Form1 extends React.Component {
   }
 
   modificar(event){
-    var link = `http://localhost:9090/products?id=` + this.state.codigo + `&price=` + this.state.precio;
+    var link = `http://localhost:9090/products?code=` + this.state.codigo + `&price=` + this.state.precio;
     console.log(link);
     const producto = {
       productCode: parseInt(this.state.codigo),
-      productName: this.state.nombre,
-      category: this.state.categoria,
       price: parseInt(this.state.precio),
-      expirationDate: this.state.fecha
 
     };
 
@@ -137,38 +119,7 @@ class Form1 extends React.Component {
       }).catch(error => {
       console.log(error.response)
       });
-    /*if(this.state.codigo === ''){
-      alert('Ingrese código');
-    }
-    else{
-      var i = 0;
-      const largo = this.state.lista.length;
-      console.log('asd');
-      while(i<largo){
-        if(this.state.lista[i][0] === this.state.codigo){
 
-          var y = document.getElementsByName("nombre");
-          this.state.nombre = y[0].value;
-          this.state.lista[i][1] = this.state.nombre;
-
-          var z = document.getElementsByName("fecha");
-          this.state.fecha = z[0].value;
-          this.state.lista[i][2] = this.state.fecha;
-
-          var t = document.getElementsByName("categoria");
-          this.state.categoria = t[0].value;
-          this.state.lista[i][3] = this.state.categoria;
-
-          var m = document.getElementsByName("precio");
-          this.state.precio = m[0].value;
-          this.state.lista[i][4] = this.state.precio;
-
-          break;
-        }
-        i++;
-      }
-    }
-    */
 
   }
 
@@ -191,7 +142,7 @@ class Form1 extends React.Component {
                     <label for="name1">Código del Producto</label>
                 </td>
                 <td class="col-sm-3">
-                     <input name="codigo" class="form-control" onChange={this.cambio}></input>
+                     <input type="number" min="num" name="codigo" class="form-control" onChange={this.cambio}></input>
                 </td>
             </tr>
             <tr>
@@ -223,7 +174,7 @@ class Form1 extends React.Component {
                     <label for="family">Precio</label>
                 </td>
                 <td class="col-sm-3">
-                    <input name="precio" class="form-control" onChange={this.cambio}></input>
+                    <input type="number" min="1" name="precio" class="form-control" onChange={this.cambio}></input>
                 </td>
             </tr>
 
