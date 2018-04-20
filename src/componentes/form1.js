@@ -61,8 +61,7 @@ class Form1 extends React.Component {
       }).catch(error => {
       console.log(error.response)
       });
-  this.forceUpdate();
-    event.preventDefault();
+      window.location.reload();
   }
 
   borrar(event){
@@ -75,6 +74,7 @@ class Form1 extends React.Component {
       }).catch(error => {
       console.log(error.response)
     });
+    window.location.reload();
 
   }
 
